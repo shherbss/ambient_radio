@@ -31,6 +31,12 @@ local ZONES = {
 local activeZone = nil
 local activeCoord = nil
 
+AddEventHandler('onClientResourceStart', function(res)
+    if res ~= GetCurrentResourceName() then return end
+    activeZone = nil
+    activeCoord = nil
+end)
+
 CreateThread(function()
     while true do
         Wait(1000)
@@ -52,7 +58,11 @@ CreateThread(function()
             if foundZone then break end
         end
 
-        if foundZone and not activeZone then
+        if foundZone and (not activeZone or activeZone.id ~= foundZone.id) then
+            if activeZone then
+                exports.xsound:Destroy(activeZone.id)
+            end
+
             activeZone = foundZone
             activeCoord = foundCoord
 
